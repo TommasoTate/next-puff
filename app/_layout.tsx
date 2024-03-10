@@ -1,15 +1,11 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Theme, ThemeProvider } from "@react-navigation/native";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
+import 'global.css'
 
-const LIGHT_THEME: Theme = {
-  dark: false,
-  colors: NAV_THEME.light,
-};
 const DARK_THEME: Theme = {
   dark: true,
   colors: NAV_THEME.dark,
@@ -19,42 +15,16 @@ const DARK_THEME: Theme = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
-  const [isColorSchemeLoaded, setIsColorSchemeLoaded] = useState(false);
+  const { setColorScheme } = useColorScheme();
 
   useEffect(() => {
-    (async () => {
-      const theme = colorScheme;
-      if (!theme) {
-        AsyncStorage.setItem("theme", colorScheme);
-        setIsColorSchemeLoaded(true);
-        return;
-      }
-      const colorTheme = theme === "dark" ? "dark" : "light";
-      if (colorTheme !== colorScheme) {
-        setColorScheme(colorTheme);
-
-        setIsColorSchemeLoaded(true);
-        return;
-      }
-      setIsColorSchemeLoaded(true);
-    })()
-      .catch(() => {
-        setIsColorSchemeLoaded(true);
-      })
-      .finally(() => {
-        SplashScreen.hideAsync();
-      });
+    setColorScheme('dark')
+    SplashScreen.hideAsync();
   }, []);
 
-  // Only render the app when the color scheme is loaded.
-  if (!isColorSchemeLoaded) {
-    console.log("color scheme not loaded");
-    return null;
-  }
   return (
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+    <ThemeProvider value={DARK_THEME}>
+      <StatusBar style={'dark'} />
       <Stack>
         <Stack.Screen name="(main)" options={{ statusBarHidden: true }} />
       </Stack>
