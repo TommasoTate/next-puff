@@ -3,12 +3,10 @@
   "main": "index.js",
   "version": "1.0.0",
   "scripts": {
-    "dev": "expo start -c --ios",
-    "dev:web": "expo start -c --web",
+    "dev": "expo start",
     "dev:android": "expo start -c --android",
     "android": "expo start -c --android",
-    "ios": "expo start -c --ios",
-    "web": "expo start -c --web"
+    "ios": "expo start -c --ios"
   },
   "dependencies": {
     "@radix-ui/react-progress": "^1.0.3",
