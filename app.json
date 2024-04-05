@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "next-puff",
-    "slug": "next-puff",
+    "name": "Starter Base",
+    "slug": "starter-base",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "scheme": "nextpuff",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -23,9 +23,13 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router"]
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }
