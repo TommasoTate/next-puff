@@ -1,26 +1,29 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {create} from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import dayjs from 'dayjs'
 
-interface FoodStoreState {
+interface PuffStoreState {
     dailyPuffs: number
-    puffInterval: number
+    getPuffInterval: () => number
     firstPuffHour: number
     lastPuffHour: number
     setDailyPuffs: (puffs: number) => void
-    setPuffInterval: (interval: number) => void
     setFirstPuffHour: (hour: number) => void
     setLastPuffHour: (hour: number) => void
 }
 
-export const useScansStore = create(persist<FoodStoreState>(
-    (set) => ({
-        dailyPuffs: 0,
-        puffInterval: 0,
-        firstPuffHour: 0,
-        lastPuffHour: 0,
+export const usePuffStore = create(persist<PuffStoreState>(
+    (set, get) => ({
+        dailyPuffs: 12,
+        getPuffInterval: () => {
+            const firstPuff = dayjs().hour(get().firstPuffHour).minute(0).second(0)
+            const lastPuff = dayjs().hour(get().lastPuffHour).minute(0).second(0)
+            return lastPuff.diff(firstPuff, 'seconds') / get().dailyPuffs
+        },
+        firstPuffHour: 7,
+        lastPuffHour: 23,
         setDailyPuffs: (puffs: number) => set({ dailyPuffs: puffs }),
-        setPuffInterval: (interval: number) => set({ puffInterval: interval }),
         setFirstPuffHour: (hour: number) => set({ firstPuffHour: hour }),
         setLastPuffHour: (hour: number) => set({ lastPuffHour: hour }),
     }),
