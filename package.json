@@ -6,7 +6,8 @@
     "dev": "expo start -c",
     "dev:android": "expo start -c --android",
     "android": "expo start -c --android",
-    "ios": "expo start -c --ios"
+    "ios": "expo start -c --ios",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@radix-ui/react-progress": "^1.0.3",
@@ -41,6 +42,11 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
+    "@typescript-eslint/parser": "^7.6.0",
+    "eslint": "^9.0.0",
+    "eslint-config-universe": "^12.0.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.2.5",
     "typescript": "^5.1.3"
   }
 }
