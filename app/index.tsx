@@ -8,7 +8,6 @@ import {
 } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import {usePuffStore} from '~/store'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Screen() {
   const intervals = usePuffStore(state => state.getPuffIntervals())
