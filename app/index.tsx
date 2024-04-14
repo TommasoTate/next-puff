@@ -8,9 +8,13 @@ import {
 } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import {usePuffStore} from '~/store'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Screen() {
-  const interval = usePuffStore(state => state.getPuffInterval())
+  const intervals = usePuffStore(state => state.getPuffIntervals())
+  const nextPuffTime = usePuffStore(state => state.getNextPuffTime())
+  const incrementDailyPuffsCount = usePuffStore(state => state.incrementDailyPuffsCount)
+  const reset = usePuffStore(state => state.reset)
 
   return (
     <View className='flex-1 justify-center items-center gap-5 p-6 bg-secondary/30'>
@@ -18,18 +22,28 @@ export default function Screen() {
         <CardContent>
           <View className='flex-row justify-around gap-3'>
             <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Interval</Text>
-              <Text className='text-xl font-semibold'>{interval}</Text>
+              {
+                intervals.map((interval, index) => (
+                  <Text key={index}>{interval.format('HH:mm')}</Text>
+                ))
+              }
+              <Text>Next puff at {nextPuffTime.format('HH:mm')}</Text>
+              <Text>Puffs count: {usePuffStore(state => state.dailyPuffsCount)}</Text>
             </View>
           </View>
         </CardContent>
         <CardFooter className='flex-col gap-3 pb-0'>
-          <View />
           <Button
             variant='outline'
             className='shadow shadow-foreground/5'
+            onPress={incrementDailyPuffsCount}
           >
             <Text>Update</Text>
+          </Button>
+          <Button
+              onPress={reset}
+          >
+            <Text>Reset</Text>
           </Button>
         </CardFooter>
       </Card>
