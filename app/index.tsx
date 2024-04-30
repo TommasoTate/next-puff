@@ -8,12 +8,15 @@ import {
 } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import {usePuffStore} from '~/store'
+import dayjs from 'dayjs'
 
 export default function Screen() {
   const intervals = usePuffStore(state => state.getPuffIntervals())
   const nextPuffTime = usePuffStore(state => state.getNextPuffTime())
   const incrementDailyPuffsCount = usePuffStore(state => state.incrementDailyPuffsCount)
   const reset = usePuffStore(state => state.reset)
+  const dailyData = usePuffStore(state => state.dailyData)
+  const key = dayjs().format('YYYYMMDD')
 
   return (
     <View className='flex-1 justify-center items-center gap-5 p-6 bg-secondary/30'>
@@ -23,11 +26,11 @@ export default function Screen() {
             <View className='items-center'>
               {
                 intervals.map((interval, index) => (
-                  <Text key={index}>{interval.format('HH:mm')}</Text>
+                  <Text key={index}>{dayjs(interval).format('HH:mm')}</Text>
                 ))
               }
-              <Text>Next puff at {nextPuffTime.format('HH:mm')}</Text>
-              <Text>Puffs count: {usePuffStore(state => state.dailyPuffsCount)}</Text>
+              <Text>Next puff at {dayjs(nextPuffTime).format('HH:mm')}</Text>
+              <Text>Puffs count: {dailyData[key].puffs}</Text>
             </View>
           </View>
         </CardContent>
