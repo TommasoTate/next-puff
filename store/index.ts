@@ -61,38 +61,26 @@ export const usePuffStore = create(persist<PuffStoreState & PuffStoreActions>(
             const intervals = get().dailyData[key]?.intervals
             if(intervals) return intervals
 
-            const firstPuff = dayjs().hour(get().baseSettings.firstPuffHour).minute(0).second(0)
-            const lastPuff = dayjs().hour(get().baseSettings.lastPuffHour).minute(0).second(0)
-            const interval = lastPuff.diff(firstPuff) / (get().baseSettings.dailyPuffs - 1)
-
-            // check if daily data exists for yesterday, otherwise today is the first day
+            const { firstPuffHour, lastPuffHour, dailyPuffs, intervalIncrement } = get().baseSettings
+            const firstPuff = dayjs().hour(firstPuffHour).minute(0).second(0)
+            const lastPuff = dayjs().hour(lastPuffHour).minute(0).second(0)
+            const interval = lastPuff.diff(firstPuff) / (dailyPuffs - 1)
             const yesterday = dayjs().subtract(1, 'day').format('YYYYMMDD')
             const yesterdayData = get().dailyData[yesterday]
-            if(yesterdayData) {
-                // check if yesterday puffs are less or equal than base settings daily puffs
-                    const intervalIncrement = yesterdayData.puffs <= get().baseSettings.dailyPuffs
-                        ? yesterdayData.intervalIncrement + get().baseSettings.intervalIncrement
-                        : yesterdayData.intervalIncrement
-                // TODO: filter out intervals that fall in the next day
-                    const dailyIntervals = Array.from({ length: get().baseSettings.dailyPuffs }, (_, i) => firstPuff.add((interval * i) + (intervalIncrement * 60 * 1000), 'millisecond').toDate())
-                    set(produce((state) => {
-                        state.dailyData[key] = {
-                            puffs: 0,
-                            intervals: dailyIntervals,
-                            intervalIncrement: intervalIncrement
-                        }
-                    }))
-                    return dailyIntervals
-            }
-            const baseIntervalIncrement = get().baseSettings.intervalIncrement
-            const dailyIntervals = Array.from({ length: get().baseSettings.dailyPuffs }, (_, i) => firstPuff.add((interval * i) + (get().baseSettings.intervalIncrement * 60 * 1000), 'millisecond').toDate())
+            const intervalIncrementValue = yesterdayData?.puffs <= dailyPuffs ? yesterdayData.intervalIncrement + intervalIncrement : intervalIncrement
+
+            const dailyIntervals = Array.from({ length: dailyPuffs }, (_, i) =>
+                firstPuff.add(interval * i + intervalIncrementValue * 60 * 1000, 'millisecond').toDate()
+            ).filter((interval) => dayjs(interval).isBefore(dayjs().endOf('day')))
+
             set(produce((state) => {
                 state.dailyData[key] = {
                     puffs: 0,
                     intervals: dailyIntervals,
-                    intervalIncrement: baseIntervalIncrement
+                    intervalIncrement: intervalIncrementValue
                 }
             }))
+
             return dailyIntervals
         },
         setDailyPuffs: (puffs: number) => set(produce((state) => state.baseSettings.dailyPuffs = puffs)),
